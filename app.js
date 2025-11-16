@@ -1,28 +1,28 @@
 async function fetchResponseCount() {
-  const sheetID = "YOUR_SHEET_ID_HERE";
-
+  const sheetID = "1pxgwzAB81VYmfPlH8Q9ifiWXZAj8qp2UB_SpM5O5aL4";
   const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json`;
 
   try {
-    const response = await fetch(url);
-    const text = await response.text();
+    const res = await fetch(url);
+    const text = await res.text();
 
-    // Remove first 47 characters + last 2 characters to get clean JSON
-    const cleanJSON = text.substring(47).slice(0, -2);
+    // Google Sheets sends weird extra text before/after JSON
+    const cleanText = text.substring(47).slice(0, -2);
 
-    const data = JSON.parse(cleanJSON);
+    const json = JSON.parse(cleanText);
 
-    // Count number of rows (each row = one Google Form submission)
-    const count = data.table.rows.length;
+    // Count number of form responses
+    const responseCount = json.table.rows.length;
 
-    // Display it
-    document.getElementById("response-count").innerText = count;
+    // Show it on page
+    document.getElementById("response-count").innerText = responseCount;
 
   } catch (error) {
-    console.error("Error fetching form responses:", error);
+    console.error("Error loading Google Form responses:", error);
+    document.getElementById("response-count").innerText = "⚠";
   }
 }
 
+// Run on page load
 window.onload = fetchResponseCount;
-
 
